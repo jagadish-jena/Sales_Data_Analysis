@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flipkart Sales Intelligence</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">Sales Data Analysis Platform</p>
+        <h1>Explore Flipkart pricing patterns, discounts, and predicted selling prices.</h1>
+        <p class="hero-text">
+          This dashboard is built from your notebook logic. It cleans product prices, measures discount percentage,
+          highlights top brands and categories, and predicts discounted price from retail price.
+        </p>
+      </div>
+      <div class="hero-panel">
+        <div class="hero-stat">
+          <span>Total Products</span>
+          <strong id="heroProducts">0</strong>
+        </div>
+        <div class="hero-stat">
+          <span>Average Discount</span>
+          <strong id="heroDiscount">0%</strong>
+        </div>
+        <div class="hero-stat accent">
+          <span>Model Accuracy</span>
+          <strong id="heroR2">0</strong>
+        </div>
+      </div>
+    </header>
+
+    <main class="dashboard">
+      <section class="panel controls-panel">
+        <div class="section-heading">
+          <p class="eyebrow">Interactive Filters</p>
+          <h2>Filter products by the user's choice</h2>
+        </div>
+        <div class="controls-grid">
+          <label>
+            <span>Search product</span>
+            <input type="text" id="searchInput" placeholder="Type product name or brand">
+          </label>
+          <label>
+            <span>Category</span>
+            <select id="categorySelect"></select>
+          </label>
+          <label>
+            <span>Brand</span>
+            <select id="brandSelect"></select>
+          </label>
+          <label>
+            <span>Sort by</span>
+            <select id="sortSelect">
+              <option value="discount-desc">Highest discount</option>
+              <option value="retail-desc">Highest retail price</option>
+              <option value="retail-asc">Lowest retail price</option>
+              <option value="discounted-asc">Lowest discounted price</option>
+              <option value="name-asc">Product name A-Z</option>
+            </select>
+          </label>
+          <label>
+            <span>Maximum retail price</span>
+            <input type="range" id="priceRange" min="0" max="10000" value="10000">
+            <strong id="priceRangeValue">Rs. 10,000</strong>
+          </label>
+          <label>
+            <span>Minimum discount %</span>
+            <input type="range" id="discountRange" min="0" max="95" value="0">
+            <strong id="discountRangeValue">0%</strong>
+          </label>
+        </div>
+      </section>
+
+      <section class="stats-grid" id="summaryCards"></section>
+
+      <section class="dual-grid">
+        <article class="panel">
+          <div class="section-heading compact">
+            <p class="eyebrow">Notebook Insights</p>
+            <h2>Top brands</h2>
+          </div>
+          <div id="brandChart" class="bar-chart"></div>
+        </article>
+        <article class="panel">
+          <div class="section-heading compact">
+            <p class="eyebrow">Category Mix</p>
+            <h2>Top product categories</h2>
+          </div>
+          <div id="categoryChart" class="bar-chart"></div>
+        </article>
+      </section>
+
+      <section class="analytics-grid">
+        <article class="panel">
+          <div class="section-heading compact">
+            <p class="eyebrow">Sales Histogram</p>
+            <h2>Retail price distribution</h2>
+          </div>
+          <div id="histogramChart" class="svg-chart"></div>
+        </article>
+        <article class="panel">
+          <div class="section-heading compact">
+            <p class="eyebrow">Sales Contribution</p>
+            <h2>Category share pie chart</h2>
+          </div>
+          <div id="pieChart" class="pie-chart-wrap"></div>
+        </article>
+      </section>
+
+      <section class="dual-grid">
+        <article class="panel">
+          <div class="section-heading compact">
+            <p class="eyebrow">Sales Bar Graph</p>
+            <h2>Top brands by discounted sales</h2>
+          </div>
+          <div id="brandSalesChart" class="svg-chart"></div>
+        </article>
+        <article class="panel">
+          <div class="section-heading compact">
+            <p class="eyebrow">Prediction Graph</p>
+            <h2>Actual vs predicted price</h2>
+          </div>
+          <div id="predictionChart" class="svg-chart"></div>
+        </article>
+      </section>
+
+      <section class="dual-grid">
+        <article class="panel predictor-panel">
+          <div class="section-heading compact">
+            <p class="eyebrow">Price Prediction</p>
+            <h2>Predict discounted price</h2>
+          </div>
+          <p class="predictor-copy">
+            Based on your notebook's linear regression model: use a retail price and the platform will estimate the discounted selling price.
+          </p>
+          <div class="predictor-form">
+            <label>
+              <span>Retail price input</span>
+              <input type="number" id="retailInput" min="0" step="1" value="2500">
+            </label>
+            <button id="predictButton" type="button">Predict Price</button>
+          </div>
+          <div class="prediction-result">
+            <div>
+              <span>Predicted discounted price</span>
+              <strong id="predictedPrice">Rs. 0</strong>
+            </div>
+            <div>
+              <span>Expected discount</span>
+              <strong id="predictedDiscount">0%</strong>
+            </div>
+          </div>
+          <div class="model-metrics" id="modelMetrics"></div>
+        </article>
+
+        <article class="panel spotlight-panel">
+          <div class="section-heading compact">
+            <p class="eyebrow">Best Match</p>
+            <h2>Highlighted product from current filters</h2>
+          </div>
+          <div id="spotlightCard" class="spotlight-card"></div>
+        </article>
+      </section>
+
+      <section class="panel table-panel">
+        <div class="section-heading compact">
+          <p class="eyebrow">Product Explorer</p>
+          <h2>Filtered products</h2>
+        </div>
+        <div class="table-meta">
+          <strong id="resultsCount">0 products</strong>
+          <span id="resultsCaption">Showing products that match the selected conditions.</span>
+        </div>
+        <div class="product-table-wrap">
+          <table class="product-table">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Category</th>
+                <th>Brand</th>
+                <th>Retail Price</th>
+                <th>Discounted Price</th>
+                <th>Discount %</th>
+              </tr>
+            </thead>
+            <tbody id="productRows"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="app-data.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
