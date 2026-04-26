@@ -1,4 +1,4 @@
-# Sales_Data+_Analysis
+# Sales_Data_Analysis
 
 This project analyzes a Flipkart e-commerce product dataset and presents the results through two dashboard experiences:
 
